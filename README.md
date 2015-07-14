@@ -2,10 +2,18 @@
 This is the package for compiling headers and links from chats
 
 ## Requirements:
-* python (2.7/3.4)
-* BeautifulSoup
-* urllib
-* chat in file
+beautifulsoup4==4.3.2
+Flask==0.10.1
+Flask-WTF==0.11
+gunicorn==19.3.0
+itsdangerous==0.24
+Jinja2==2.7.3
+lxml==3.4.4
+Markdown==2.6.2
+MarkupSafe==0.23
+requests==2.7.0
+Werkzeug==0.10.4
+WTForms==2.0.2
 
 ### Setting Categories
 The default category is "Uncategorized". To set a new category. Enter the "#" Followed by the Category. The whole line will be accepted as the category.
