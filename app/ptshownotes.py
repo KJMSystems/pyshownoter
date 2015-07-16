@@ -7,9 +7,9 @@ def clean_line(line):
     return str().join(c for c in line if ord(c) < 128)
 
 
-class shownotes():
+class Shownotes():
 
-    def sn(self, chat):
+    def snote(self, chat):
         self.scrape(self.lnk_detect(chat))
         return self.org()
 
@@ -18,7 +18,7 @@ class shownotes():
         self.rdict = OrderedDict()
         self.rdict[self.key] = list()
         self.bad_links = list()
-        self.md_text = self.sn(text)
+        self.md_text = self.snote(text)
 
     def lnk_detect(self, chat):
         return re.findall(r'^#.*|\b\S+\.\S+', chat, re.M)
