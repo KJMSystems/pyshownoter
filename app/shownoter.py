@@ -31,6 +31,9 @@ def format_links_as_hash(source):
                 continue
 
         if valid_link:
+            if not link.title:
+                link.title = link.url
+
             entry = {
                 'url':link.url,
                 'title':link.title,
@@ -123,7 +126,7 @@ def possible_urls(url):
 def get_domain(url):
     """returns the domain of the url"""
     pattern = re.compile(r'\w{3,5}:\/\/(www\.)?|www\.')
-    new_url = re.sub(pattern,'', url) 
+    new_url = re.sub(pattern,'', url)
     return new_url
 
 def valid_link(site):
@@ -144,7 +147,7 @@ def valid_link(site):
 class Link():
     def collect_data(self, site):
         """ Collects the various information about the link """
-        
+
         cached_url = mongo.retrieve_from_cache(site)
 
         if cached_url:
@@ -156,13 +159,13 @@ class Link():
             self.site = valid_link(site)
             self.url =  self.site.url
             self.title = parse_title(self.site.content)
-            mongo.cache_url(self.url, self.title)        
+            mongo.cache_url(self.url, self.title)
 
         self.markdown = link_markdown(self.title, self.url)
 
 class Image(Link):
     """Images are like links except they ignore connectivity tests."""
-    
+
     title = ''
 
     def __init__(self, site):

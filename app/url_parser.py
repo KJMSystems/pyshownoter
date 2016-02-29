@@ -27,12 +27,11 @@ def image_detect(url):
 
     if extension == None:
         return False
-    
-    if extension.groups(0) in image_extension:
+
+    if extension.group(0) in image_extension:
         return True
-    
+
+
 def check_tld(domain):
     """returns True if domain is listed as a top-level domain"""
-    return domain.upper() in tld
-
-
+    return domain.upper() in top_level_domains

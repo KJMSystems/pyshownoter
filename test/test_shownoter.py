@@ -232,7 +232,7 @@ def test_format_links_with_default_title_if_title_not_found(monkeypatch):
     text = "link.com"
     results = shownoter.format_links_as_hash(text)
     assert 1 == len(results)
-    assert "link.com" == results[0]["title"]
+    assert "http://link.com" == results[0]["title"]
 
 def test_maintains_case(monkeypatch):
     monkeypatch.setattr(shownoter, 'get', mock_get)

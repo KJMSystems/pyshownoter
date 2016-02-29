@@ -1,4 +1,7 @@
-""" This file contains fixtures and other functions used across multiple tests """
+"""
+This file contains fixtures and other functions used across multiple tests
+"""
+from app import mongo
 
 import pytest
 
@@ -25,6 +28,11 @@ class GetNotFound(object):
 
 def mock_get(url):
     return GetResult(url)
+
+@pytest.fixture(autouse=True)
+def kill_cache(monkeypatch):
+    """Make the caching function always return no matches when testing"""
+    monkeypatch.setattr(mongo, "retrieve_from_cache", lambda x: None)
 
 def mock_not_found(url):
     return GetNotFound(url)
