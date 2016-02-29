@@ -12,7 +12,7 @@ from markdown import markdown
 
 
 def format_links_as_hash(source):
-    urls = link_detect(source)
+    urls = url_parser.link_detect(source)
     links = []
 
     for url in urls:
@@ -163,7 +163,7 @@ class Link():
 
         self.markdown = link_markdown(self.title, self.url)
 
-class Image():
+class Image(Link):
     """Images are like links except they ignore connectivity tests."""
 
     title = ''
@@ -171,6 +171,7 @@ class Image():
     def __init__(self, site):
         self.url = site
         self.markdown = image_markdown(self.title, self.url)
+
 
 def links_to_string(links):
     """This function takes a list of objects and returns it as a string"""
