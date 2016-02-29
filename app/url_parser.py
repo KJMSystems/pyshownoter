@@ -34,4 +34,4 @@ def image_detect(url):
 
 def check_tld(domain):
     """returns True if domain is listed as a top-level domain"""
-    return domain.upper() in tlds
+    return domain.upper() in top_level_domains

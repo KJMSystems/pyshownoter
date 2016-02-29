@@ -1,9 +1,9 @@
 import pytest
-from app.url_parser import tlds
+from app.url_parser import top_level_domains
 from app.url_parser import check_tld
 
 def test_tld_contains_info():
-    assert tlds
+    assert top_level_domains
 
 @pytest.fixture
 def test_var():
@@ -11,7 +11,7 @@ def test_var():
     return test_var
 
 def test_tld_doesnt_contain_test_variables(test_var):
-    assert test_var not in tlds
+    assert test_var not in top_level_domains
 
 
 def test_tlds_not_in_check_tld(test_var):
