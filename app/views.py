@@ -45,7 +45,7 @@ def index():
         link_id = mongo.create_entry(links=links, date=datetime.utcnow())
         return redirect(url_for('get_links', id=link_id))
         
-        
+    #Retrieves the Stats for the frontpage    
     stats = {
             'total_shownotes':mongo.count_entries(mongo.shownotes_coll),
             'total_links':mongo.count_entries(mongo.links_coll),
