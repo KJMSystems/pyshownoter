@@ -6,6 +6,9 @@ import requests
 
 from test_helpers import *
 
+
+nose_pick_image_url = "http://i.kinja-img.com/gawker-media/image/upload/s--L1pCBzQp--/c_scale,fl_progressive,q_80,w_800/ysoqiqmpjisekm04i3zi.jpg"
+
 # Test link detection
 
 def test_link_detect_finds_one_link_text():
@@ -183,6 +186,9 @@ def test_image_detect_detects_gif():
 def test_image_detect_does_not_detect_outside_other_links():
     link = 'link.foo'
     assert not url_parser.image_detect(link)
+
+def test_image_detects_nose_picking():
+    assert url_parser.image_detect(nose_pick_image_url)
 
 def test_image_detect_does_not_throw_attribute_error_when_no_extension():
     link = 'https://gist.github.com/anonymous/7e5fa94f6e946551b70a'
