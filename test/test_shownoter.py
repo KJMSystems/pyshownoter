@@ -250,6 +250,15 @@ def test_maintains_case(monkeypatch):
     assert "Test" == results[0]["title"]
     assert "https://www.youtube.com/watch?v=dQw4w9WgXcQ" == results[0]["url"]
 
+def test_image_is_generated_correctly(monkeypatch):
+    monkeypatch.setattr(shownoter, 'get', mock_get)
+
+    text = nose_pick_image_url
+    results = shownoter.format_links_as_hash(text)
+    assert 1 == len(results)
+    assert nose_pick_image_url in results[0]["markdown"]
+    assert nose_pick_image_url == results[0]["url"]
+
 def test_get_domain():
     urls = ['http://foo.com', 'http://www.foo.com', 'https://foo.com', 'ftp://foo.com', 'www.foo.com']
     for url in urls:
