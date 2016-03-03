@@ -15,7 +15,7 @@ matrix:
       env: TOXENV=py35
     - python: 3.5
       env: TOXENV=lint
-    - env: TOXENV=coverage
+      env: TOXENV=coverage
   fast_finish: true
   allow_failures:
     - python: 3.2
@@ -24,5 +24,6 @@ matrix:
       env: TOXENV=lint
     - python: 3.5
       env: TOXENV=lint
+      env: TOXENV=coverage
 
 sudo: false
