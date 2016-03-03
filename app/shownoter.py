@@ -1,7 +1,7 @@
-""" 
-The shownoter module contains the core Shownoter functionality 
+"""
+The shownoter module contains the core Shownoter functionality
 
-WARNING: Shownoter.py is undergoing a refactoring. Please do not add any new code until the refactoring has been completed. 
+WARNING: Shownoter.py is undergoing a refactoring. Please do not add any new code until the refactoring has been completed.
 
 For information on refactoring: please see Trello board at https://trello.com/c/1YXgQUOq/117-refactor-shownoter-py
 """
@@ -25,9 +25,9 @@ def format_links_as_hash(source):
     links = [] #empty container that will be populated by urls that are valid
 
     for url in urls:
-        valid_link = True 
+        valid_link = True
         # TODO: insert checks for valid links
-        
+
         if url_parser.image_detect(url): #checks for image extensions on valid links
             link = Link(is_image=True)
             link.url = url
@@ -41,7 +41,7 @@ def format_links_as_hash(source):
                 valid_link = False
                 continue
 
-        if valid_link: 
+        if valid_link:
             if not link.title:
                 link.title = link.url
 
@@ -59,15 +59,12 @@ def format_links_as_markdown(source):
     links = []
 
     for url in urls:
-        if image_detect(url):
-            link = Image(url)
-        else:
-            link = Link()
-            link.collect_data(url)
+        link = Link()
+        link.collect_data(url)
 
         links.append(link.markdown)
 
-    output = links_to_string(links)
+    output = "\n".join(links)
     return output.strip()
 
 def link_detect(site): #TODO: REMOVE
@@ -82,7 +79,7 @@ def link_detect(site): #TODO: REMOVE
 
     return links
 
-def get(link): 
+def get(link):
     """ A wrapper around requests.get to allow for easy mocking """
     return requests.get(link, timeout=1.5, allow_redirects=False)
 
@@ -158,29 +155,26 @@ def valid_link(site):
 class Link():
     """Class that creates the link dictionary reference holding the site information"""
 
-    def __init__(self, is_image=False):
-        self.is_image = is_image
-        
+    def collect_data(self, url):
+        """ Collects the various information about the link """
+
+        self.is_image = url_parser.image_detect(url)
+
         if self.is_image:
             self.title = ''
             self.url = url
             self.markdown = image_markdown(self.title, self.url)
-
-    def collect_data(self, site):
-        """ Collects the various information about the link """
-
-        cached_url = mongo.retrieve_from_cache(site)
-        
-        if cached_url:
-            self.url = cached_url['url']
-            self.title = cached_url['title']
-
         else:
-            #TODO REMOVE SELF SITE AND MAKE JUST SITE!!!
-            self.site = valid_link(site)
-            self.url =  self.site.url
-            self.title = parse_title(self.site.content)
-            mongo.cache_url(self.url, self.title)
+            cached_url = mongo.retrieve_from_cache(url)
+            if cached_url:
+                self.url = cached_url['url']
+                self.title = cached_url['title']
+            else:
+                #TODO REMOVE SELF SITE AND MAKE JUST SITE!!!
+                self.site = valid_link(url)
+                self.url =  self.site.url
+                self.title = parse_title(self.site.content)
+                mongo.cache_url(self.url, self.title)
 
-        self.markdown = link_markdown(self.title, self.url)
+            self.markdown = link_markdown(self.title, self.url)
 

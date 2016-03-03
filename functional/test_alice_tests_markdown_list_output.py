@@ -1,4 +1,5 @@
 from app import shownoter
+from app import mongo
 import pytest
 
 
@@ -19,6 +20,12 @@ def mock_http(monkeypatch):
     "{url} Homepage"
     """
     monkeypatch.setattr(shownoter, 'get', mock_url_homepage_result)
+
+@pytest.fixture(autouse=True)
+def kill_cache(monkeypatch):
+    """Make the caching function always return no matches when testing"""
+    monkeypatch.setattr(mongo, "retrieve_from_cache", lambda x: None)
+    monkeypatch.setattr(mongo, "cache_url", lambda x, y: None)
 
 def test_alice_generates_basic_shownotes():
     """
