@@ -33,6 +33,7 @@ def mock_get(url):
 def kill_cache(monkeypatch):
     """Make the caching function always return no matches when testing"""
     monkeypatch.setattr(mongo, "retrieve_from_cache", lambda x: None)
+    monkeypatch.setattr(mongo, "cache_url", lambda x, y: None)
 
 def mock_not_found(url):
     return GetNotFound(url)
