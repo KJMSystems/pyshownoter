@@ -3,7 +3,7 @@ from app import app
 #static files
 from app import static_files
 
-from app import shownoter
+from app.shownoter import shownoter
 from app import mongo
 from app import download
 from app.contributors import contributors
@@ -41,7 +41,7 @@ def index():
             flash('no chat detected')
             return render_template('index.html', form=form)
 
-        links = shownoter.format_links_as_hash(chat_text)
+        links = shownoter(chat_text)
         link_id = mongo.create_entry(links=links, date=datetime.utcnow())
         return redirect(url_for('get_links', id=link_id))
         
