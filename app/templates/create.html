@@ -9,17 +9,8 @@
             <p><b>Custom Title:</b> {{form.custom_title}}</p>
             <p><b>Links Only (No Title/Description):</b> 
             {{form.bypass_title_description}}</p>
+
             <p><input id="chat_submit" type="submit" value="Submit"></p>
         </form>
     </div>        
-    <div id="stats">
-        Total Number of Shownotes: {{stats['total_shownotes']}}<br>
-        Total Number of Links:{{stats['total_links']}}<br>
-        Last Five Shownotes:
-        <ul>
-        {% for result in stats['last_five'] %}
-        <li><a href="/results/{{result[1]}}">{{result[0]}}</a></li>
-        {% endfor %}
-        </ul>
-    </div>
 {% endblock %}

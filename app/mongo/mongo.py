@@ -46,13 +46,6 @@ def get_domain(url):
     return new_url
 
 
-def last_five():
-    last_five_items = shownotes_coll.find(
-        {"title": {"$exists": True}}).sort(
-        "created", pymongo.DESCENDING).limit(5)
-    return last_five_items
-
-
 def count_entries(collection):
     count = collection.count()
     return count

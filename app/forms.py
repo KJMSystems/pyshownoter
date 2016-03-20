@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import TextAreaField, FileField, StringField, BooleanField
+from wtforms import PasswordField
 
 
 class TextInput(Form):
@@ -12,3 +13,8 @@ class TextInput(Form):
 class DescInput(Form):
     title = StringField('title_input')
     description = TextAreaField('text_input')
+
+
+class LoginForm(Form):
+    username = StringField('username')
+    password = PasswordField('password')

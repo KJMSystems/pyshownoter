@@ -2,7 +2,7 @@
 from app import shownoter
 from app.validations import url_parser
 from app.validations import custom_title
-from app import cache_db
+from app.mongo import cache_db
 
 
 def shownoter_wrapper(content, custom_title_enabled):

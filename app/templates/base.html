@@ -5,10 +5,13 @@
         <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
     </head>
     <body>
+        <div id="content">
         <div id="title_wrapper">
-        <h1><a href="/">Shownoter.co - Beta</a></h1>
+        <h1><a href="/welcome">Shownoter.co - Beta</a></h1>
         </div>
-
+        
+        <div id="top_nav"><a href="/login">Login</a> | <a href="logout">Logout</a>
+        </div>
         <div id="content_wrapper">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -27,7 +30,8 @@
             <p class="disclaimer"><em>Shownoter</em> is managed by <a href="https://twitter.com/kjaymiller">kjaymiller</a>. For contribution information/issue reports, <a href ="https://trello.com/b/jlyUZ0ml/shownoter">Click Here</a>.</p>
             <p class="disclaimer"><em>Shownoter</em> is Licensed Under the Apache License, Version 2.0.</br>
         Please visit <a href="http://www.apache.org/licenses/LICENSE-2.0.html">http://www.apache.org/licenses/LICENSE-2.0.html</a> for more information. </p> 
-        </div>
+    </div>
+</div>
     </body>
 </html>
 

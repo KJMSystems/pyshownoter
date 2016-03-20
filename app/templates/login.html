@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="login">
+    
+    <form action="" method="post" name="Login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    <ul>
+        <li>Username: {{form.username}}</li>
+        <li>Password: {{form.password}}</li>
+                
+        <p><input id="chat_submit" type="submit" value="Submit"></p>
+    </form>
+</div>
+
+{% endblock %}

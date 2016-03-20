@@ -2,30 +2,66 @@ from app import app
 
 # static files
 from app import static_files
-
-from app.mongo import shownotes_coll, links_coll
-from app.mongo import retrieve_from_db, create_entry, count_entries
-from app.mongo import append_to_entry, last_five
+from app.mongo import mongo
+from app.mongo import db_stats
 
 from app.views_helper import shownoter_wrapper
 
-from app.forms import TextInput, DescInput
+from app.forms import TextInput, DescInput, LoginForm
 
 from datetime import datetime
-from flask import render_template, url_for, redirect
+from flask import render_template, url_for, redirect, session
 from flask import Markup
 from flask import flash
 from flask import request
 from flask import make_response
 
+from functools import wraps
 from markdown import markdown
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+def login_required(test):
+    @wraps(test)
+    def wrap(*args, **kwargs):
+
+        if 'logged_in' in session:
+            return test(*args, **kwargs)
+
+        else:
+            flash("You are currently not logged in")
+            return redirect(url_for('login'))
+    return wrap
+
+
+@app.route('/')
+@app.route('/index')
 def index():
     """This is the home page"""
 
+    if 'logged_in' in session:
+        return redirect(url_for('create_shownote'))
+
+    else:
+        return redirect(url_for('welcome'))
+
+
+@app.route('/welcome')
+def welcome():
+    # Retrieves the Stats for the frontpage
+    stats = {
+        'total_shownotes': mongo.count_entries(
+            mongo.shownotes_coll), 'total_links': mongo.count_entries(
+            mongo.links_coll), 'item_count': [
+                (result['title'],
+                 result['_id']) for result in db_stats.last(20)
+                ]
+        }
+    return render_template('welcome.html', stats=stats)
+
+
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create_shownote():
     form = TextInput()
 
     if form.validate_on_submit():
@@ -41,16 +77,16 @@ def index():
 
         else:
             flash('no chat detected')
-            return render_template('index.html', form=form)
+            return render_template('index.html')
 
         custom_title = form.custom_title.data
         links = shownoter_wrapper(chat_text,
                                   custom_title_enabled=custom_title)
 
-        link_id = create_entry(value={
+        link_id = mongo.create_entry(value={
                                     'links': links,
                                     'created': datetime.utcnow()
-                                    }, collection=shownotes_coll)
+                                    }, collection=mongo.shownotes_coll)
 
         if form.bypass_title_description.data:
             title = 'Untitled Shownotes'
@@ -59,23 +95,13 @@ def index():
                 'title': title,
                 'description': ''
                 }
-            append_to_entry(link_id, entry)
+            mongo.append_to_entry(link_id, entry)
             return redirect(url_for('results', id=link_id))
 
         else:
             return redirect(url_for('get_links', id=link_id))
 
-    # Retrieves the Stats for the frontpage
-    stats = {
-        'total_shownotes': count_entries(
-            shownotes_coll), 'total_links': count_entries(
-            links_coll), 'last_five': [
-                (result['title'],
-                 result['_id']) for result in last_five()
-                ]
-        }
-
-    return render_template('index.html', form=form, stats=stats)
+    return render_template('create.html', form=form)
 
 
 @app.route('/links/<id>', methods=['GET', 'POST'])
@@ -83,9 +109,9 @@ def get_links(id):
     """This page is where the Title and Description are added"""
 
     form = DescInput()
-    links = [link for link in retrieve_from_db(value=id,
-                                               collection=shownotes_coll
-                                               )['links']]
+    db_links = mongo.retrieve_from_db(value=id,
+                                      collection=mongo.shownotes_coll)
+    links = [link for link in db_links['links']]
 
     if form.validate_on_submit():
         title = form.title.data
@@ -96,7 +122,7 @@ def get_links(id):
                 'title': title,
                 'description': form.description.data
             }
-        append_to_entry(id, entry)
+        mongo.append_to_entry(id, entry)
 
         return redirect(url_for('results', id=id))
     return render_template('links.html', form=form, links=links)
@@ -106,7 +132,8 @@ def get_links(id):
 def results(id):
     """The final result of creating Shownotes"""
 
-    db_entry = retrieve_from_db(value=id, collection=shownotes_coll)
+    db_entry = mongo.retrieve_from_db(value=id,
+                                      collection=mongo.shownotes_coll)
     description = Markup(markdown(db_entry['description']))
     links = [link for link in db_entry['links']]
     title = db_entry['title']
@@ -123,7 +150,8 @@ def results(id):
 def download_file(id):
     """Saves the file into a .txt file"""
 
-    db_entry = retrieve_from_db(value=id, collection=shownotes_coll)
+    db_entry = mongo.retrieve_from_db(value=id,
+                                      collection=mongo.shownotes_coll)
     description = db_entry['description']
     links = [link['markdown'] for link in db_entry['links']]
     link_text = ''
@@ -147,3 +175,26 @@ def download_file(id):
         'Content-Disposition'] = 'attachment; filename={}'.format(filename)
     response.content_type = 'text/plain'
     return response
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+
+    if request.method == 'POST':
+        if form.username.data != 'test' or form.password.data != 'password':
+            flash('Invalid Credentials! Please Try Again')
+
+        else:
+            session['logged_in'] = True
+            return redirect(url_for('index'))
+
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    session.pop('logged_in', None)
+    flash('You have been successfully logged out')
+    return redirect(url_for('index'))

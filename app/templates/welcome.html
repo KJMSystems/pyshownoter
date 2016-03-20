@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="/static/css/welcome.css">
+<div id="about_shownoter">
+    <img src="static/images/listen.jpg">
+    <p>
+    <em> Organize and create amazing show notes!</em>
+</div>
+    <div id="start">
+        <a href="/create">Get Started</a>
+    </div>
+        <ul class="stats">
+            <li>Total Number of Shownotes: {{stats['total_shownotes']}}</li>
+            <li>
+            Total Number of Links:{{stats['total_links']}}</li>
+    </ul>
+        <p>
+        <ul class="grid_list">
+        {% for result in stats['item_count'] %}
+        <li><a href="/results/{{result[1]}}">{{result[0]}}</a></li>
+        {% endfor %}
+    </ul>
+    </p>
+    </div>
+{% endblock %}
